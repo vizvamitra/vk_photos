@@ -1,8 +1,16 @@
+require 'sinatra'
+require 'haml'
+require 'zipruby'
+require 'rufus-scheduler'
+require 'securerandom'
+require 'logger'
+require File.expand_path '../lib/vk.rb', __FILE__
+
 class VkPhotos < Sinatra::Base
 
   configure :development, :production do
-    enable :logging
-    enable :sessions
+    enable :logging, :sessions
+    disable :run
   end
 
   not_found { redirect '/' }
@@ -88,6 +96,8 @@ class VkPhotos < Sinatra::Base
   end
 
   def schedule_deletion file
+    logger = Logger.new('log/app.log')
+
     Thread.new do
       filename = File.basename(file) 
 

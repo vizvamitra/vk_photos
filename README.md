@@ -12,9 +12,9 @@ To run this app in production you can use bash script like that:
 
     #!/bin/bash
 
-    APP_ID=your_app_id APP_SECRET=your_app_secret RACK_ENV=production DOMAIN_NAME=your_domain_name ruby app.rb >> log/app.log 2>&1
+    APP_ID=your_app_id APP_SECRET=your_app_secret DOMAIN_NAME=your_domain_name BIND_IP=ip_to_bind_app BIND_PORT=some_port RACK_ENV=production ruby app.rb >> log/app.log 2>&1
 
-Otherwise you will need to somehow set APP_ID, APP_SECRET and DOMAIN_NAME environment variables (or code them directly into app.rb or vk_photos.rb file)
+Otherwise you will need to somehow set APP_ID, APP_SECRET, DOMAIN_NAME, BIND_IP and BIND_PORT environment variables (or code them directly into app.rb or vk_photos.rb file)
 
 ### Behavior
 
