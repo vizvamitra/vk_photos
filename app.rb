@@ -2,6 +2,13 @@
 
 $:.unshift "#{Dir.pwd}/lib"
 
+require 'sinatra'
+require 'haml'
+require 'zipruby'
+require 'rufus-scheduler'
+require 'securerandom'
+require 'vk'
+
 require './vk_photos'
 
 if __FILE__ == $0

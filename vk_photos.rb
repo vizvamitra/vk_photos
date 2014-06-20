@@ -1,9 +1,3 @@
-require 'sinatra'
-require 'haml'
-require 'zip'
-require 'rufus-scheduler'
-require 'vk'
-
 class VkPhotos < Sinatra::Base
 
   configure :development, :production do
@@ -53,12 +47,13 @@ class VkPhotos < Sinatra::Base
     info = zip_from_urls urls, dir+filename
     schedule_deletion(dir+filename)
 
-    redirect "/photos?count=#{info[:count]}&skipped=#{info[:skipped]}&filename=#{'/tmp/'+filename}"
+    redirect "/photos?count=#{info[:count]}&skipped=#{info[:skipped]}&password=#{info[:password]}&filename=#{'/tmp/'+filename}"
   end
 
   get '/photos' do
     @count = params[:count].to_i
     @skipped = params[:skipped].to_i
+    @password = params[:password]
     @file_url = params[:filename]
     haml :photos
   end
@@ -72,20 +67,24 @@ class VkPhotos < Sinatra::Base
 
   def zip_from_urls urls, filename
     count, skipped = 0, 0
-    Zip::File.open(filename, Zip::File::CREATE) do |zipfile|
+    password = SecureRandom.hex(4)
+
+    Zip::Archive.open(filename, Zip::CREATE) do |archive|
       urls.each do |url|
         name = url[/[^\/]+\.[\w]+$/]
         begin
-          file = open(url)
+          buffer = open(url).read
           count += 1
         rescue
           skipped += 1
           next
         end
-        zipfile.add(name, file)
+        archive.add_buffer(name, buffer)
       end
+
+      archive.encrypt(password)
     end
-    {count: count, skipped: skipped}
+    {count: count, skipped: skipped, password: password}
   end
 
   def schedule_deletion file
