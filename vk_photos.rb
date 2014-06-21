@@ -14,6 +14,7 @@ class VkPhotos < Sinatra::Base
   end
 
   not_found { redirect '/' }
+  error { redirect '/error?msg=неведомая ошибка' }
 
   before /auth|auth\/vk|download/ do
     @vk = VK.new(ENV['APP_ID'], ENV['APP_SECRET'])
@@ -34,13 +35,17 @@ class VkPhotos < Sinatra::Base
 
   get '/auth/vk' do
     if params[:code]
-      response = @vk.auth(params[:code])
+      begin
+        response = @vk.auth(params[:code])
+      rescue
+        redirect '/error?msg=ошибка соединения'
+      end
 
       if response["access_token"]
         set_session(response)
         redirect '/download'
       elsif response[:error]
-        redirect "/error?msg=#{response["error_description"]}"
+        redirect "/error?msg=#{response["error"]}"
       end
     else
       redirect '/'
