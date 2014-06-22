@@ -5,7 +5,7 @@
     %link{rel: "stylesheet", type: "text/css", href: "/css/styles.css"}
     %title РЕЗУЛЬТАТЫ - Скачать фотки с собой
   %body
-    %div
+    %div.main
       %p= "Всего фотографий скачано: #{@count}"
       - unless @skipped.zero?
         %p= "Пропущено из-за ошибок соединения: <span class=error>#{@skipped}</span>"

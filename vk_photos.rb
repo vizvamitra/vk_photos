@@ -22,10 +22,12 @@ class VkPhotos < Sinatra::Base
     @vk.redirect_uri = "#{ENV['DOMAIN_NAME']}/auth/vk"
   end
 
-  get('/') { haml :index }  
+  get('/') do
+    haml :index
+  end
 
   get '/auth' do
-    if session[:token] and session[:expires] > Time.now.to_i
+    if token_valid?
       redirect '/download'
     else
       clear_session
@@ -120,6 +122,10 @@ class VkPhotos < Sinatra::Base
 
       logger.info "deletion scheduled for '#{filename}'"
     end if File.exist?(file)
+  end
+
+  def token_valid?
+    session[:token] and (session[:expires] > Time.now.to_i)
   end
 
   def set_session response
