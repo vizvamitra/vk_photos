@@ -47,8 +47,10 @@ class VkPhotos < Sinatra::Base
       elsif response[:error]
         redirect "/error?msg=#{response["error"]}"
       end
+    elsif params[:error]
+      redirect "/error?msg=#{params[:error].gsub('_', ' ')}"
     else
-      redirect '/'
+      redirect "/error?msg=неведомая ошибка"
     end
   end
 
